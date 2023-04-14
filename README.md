@@ -28,6 +28,6 @@ This game was developed using HTML, CSS, and TypeScript.
 
 ## Credits
 
--The intro worm graphic was generated using Image Creator from Microsoft Bing
--The worm glyphs were scrapped from mathpickle
--The number sounds were downloaded from https://ttsmp3.com/
+- The intro worm graphic was generated using Image Creator from Microsoft Bing
+- The worm glyphs were scrapped from mathpickle
+- The number sounds were downloaded from https://ttsmp3.com/
