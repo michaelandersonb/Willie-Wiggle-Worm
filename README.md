@@ -6,6 +6,11 @@ step of the path. Some levels are impossible; spot them and declare it.
 
 https://mathpickle.com/project/willie-wiggle-wiggle-worm/
 
+## Installation
+
+Visit https://michaelandersonb.github.io/Willie-Wiggle-Worm/ to play the
+current master version.
+
 ## How to Play
 
 1. Pick a level type on the menu, then press Play.
