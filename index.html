@@ -2,16 +2,22 @@
 <html>
 
 <head>
+    <meta charset="utf-8">
     <style>
         body {
             background-color: white;
             margin: 0;
             padding: 0;
+            height: 100dvh;
+            overflow: hidden;
         }
 
         .game-screen {
             display: none;
             text-align: center;
+            max-height: 100dvh;
+            padding: 4px;
+            box-sizing: border-box;
         }
 
         .reset-button {
@@ -26,8 +32,8 @@
 
         .grid-container {
             display: grid;
-            grid-template-columns: repeat(5, min(19vw, 19vh));
-            grid-template-rows: repeat(5, min(19vw, 19vh));
+            grid-template-columns: repeat(5, min(17vw, calc((100dvh - 250px) / 5)));
+            grid-template-rows: repeat(5, min(17vw, calc((100dvh - 250px) / 5)));
             justify-content: center;
         }
 
@@ -39,6 +45,126 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            position: relative;
+        }
+
+        .grid-item.has-clue {
+            background-color: rgba(255, 243, 205, 0.9);
+        }
+
+        .clue-badge {
+            position: absolute;
+            top: 2px;
+            left: 5px;
+            font-size: 15px;
+            font-weight: bold;
+            color: #333;
+            background: rgba(255, 255, 255, 0.88);
+            border-radius: 8px;
+            padding: 0 5px;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .clue-badge.clue-bad {
+            color: #b00020;
+            text-decoration: underline;
+        }
+
+        #tier-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 12px;
+            max-width: 320px;
+            width: min(320px, 90vw);
+        }
+
+        .tier-button {
+            font-size: 15px;
+            padding: 6px 14px;
+            background-color: #f0f0f0;
+            border: 2px solid #2196F3;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .tier-button.selected {
+            background-color: #2196F3;
+            color: white;
+        }
+
+        #level-title {
+            margin: 4px 0 2px;
+            font-size: 20px;
+        }
+
+        #step-counter {
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+
+        #message {
+            min-height: 20px;
+            font-size: 14px;
+            color: #b00020;
+            margin-bottom: 4px;
+        }
+
+        .button-row {
+            margin-top: 6px;
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .action-button {
+            padding: 8px 14px;
+            border: none;
+            border-radius: 5px;
+            background-color: #2196F3;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        #impossible-button {
+            background-color: #e65100;
+        }
+
+        #impossible-button:disabled {
+            background-color: #a1887f;
+            cursor: not-allowed;
+        }
+
+        .start-screen p {
+            margin: 6px 0;
+        }
+
+        @media (max-height: 620px) {
+            .title {
+                font-size: 24px;
+                margin-bottom: 6px;
+            }
+            .graphic {
+                display: none;
+            }
+            .tier-button {
+                font-size: 13px;
+                padding: 4px 10px;
+            }
+            #tier-list {
+                gap: 4px;
+                margin-bottom: 8px;
+            }
+            #level-title {
+                font-size: 16px;
+            }
+            .action-button {
+                padding: 6px 10px;
+                font-size: 14px;
+            }
         }
 
         .grid-item img {
@@ -60,19 +186,22 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            height: 100dvh;
+            box-sizing: border-box;
+            padding: 8px;
         }
 
         .title {
-            font-size: 48px;
-            margin-bottom: 40px;
+            font-size: 32px;
+            margin: 0 0 12px;
+            text-align: center;
         }
 
         .graphic {
-            width: 200px;
-            height: 200px;
+            width: min(160px, 20dvh);
+            height: min(160px, 20dvh);
             background-color: white;
-            margin-bottom: 40px;
+            margin-bottom: 12px;
         }
 
         .graphic img {
@@ -114,20 +243,25 @@
         <div class="graphic" id="graphic">
             <img src="willy wiggle wiggle worm.jpg">
         </div>
+        <p>Pick a level type:</p>
+        <div id="tier-list"></div>
         <button class="play-button" id="play-button">Play</button>
     </div>
 
     <div id="level-completed-screen">
-        <h1>Level Completed!</h1>
+        <h1 id="level-completed-title">Level Completed!</h1>
         <button id="next-level-button">Next Level</button>
     </div>
 
     <div id="game-completed-screen">
-        <h1>Game Completed!</h1>
-        <button id="restart-button">Restart Game</button>
+        <h1 id="game-completed-title">Game Completed!</h1>
+        <button id="restart-button">Back to Menu</button>
     </div>
 
     <div class="game-screen" id="game-screen">
+        <h2 id="level-title"></h2>
+        <div id="step-counter"></div>
+        <div id="message"></div>
         <div class="grid-container">
             <div class="grid-item"></div>
             <div class="grid-item"></div>
@@ -155,9 +289,15 @@
             <div class="grid-item"></div>
             <div class="grid-item"></div>
         </div>
-        <button class="reset-button" id="reset">Reset Game</button>
+        <div class="button-row">
+            <button class="action-button" id="reset">Reset Level</button>
+            <button class="action-button" id="undo-button">Undo Move</button>
+            <button class="action-button" id="impossible-button">Declare Impossible</button>
+            <button class="action-button" id="menu-button">Menu</button>
+        </div>
     </div>
 </body>
+<script type="text/javascript" src="levels.js"></script>
 <script type="text/javascript" src="main.js"></script>
 
 </html>
